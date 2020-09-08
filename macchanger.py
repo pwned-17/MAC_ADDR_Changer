@@ -10,6 +10,17 @@ def inputparser():#Parsing Command Line arguments
     parse.add_option("-m","--mac",dest="nmac",help="Specify the new mac address that has to be spoofed");
     return parse.parse_args();
 
+def check_interface(inter,nmac):
+    if (inter=="lo"):
+        print("[-]The Mentioned Interface Doesnt Have any MAC ADDR")
+    else:
+        output=subprocess.check_output(["ifconfig"])
+        output=output.decode('utf-8')
+        if(re.search(inter,output)):
+            mac_changer(inter,nmac)
+        else:
+            print("[-]Check Your Interface")
+        
 def check_change(inter,nmac):
     cmd=subprocess.check_output(["ifconfig",inter])
     cmd2=cmd.decode('utf-8')
@@ -19,10 +30,7 @@ def check_change(inter,nmac):
     if (mac_valu[0]==nmac):
         print("[+]Change successfull")
     else :
-        print("Error changing Mac , specify Mac in this format XX:XX:XX:XX:XX:XX")
-    
-
-
+        print("[-]Error changing Mac , specify Mac in this format XX:XX:XX:XX:XX:XX")
     
 def mac_changer(inter,nmac): # function to change the mac addr
     print("[+]Changing Mac Address of "+inter+" to "+nmac);
@@ -41,7 +49,9 @@ if (not inter and not nmac):
     print("Please Specify Both Interface and Mac")
     print("Use -h form more details")
 else :
-    mac_changer(inter,nmac)
+    check_interface(inter,nmac)
+
+    
 
 
 
